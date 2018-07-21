@@ -15,8 +15,7 @@ namespace AggregateGDPPopulation
             string line;
             StreamReader sample = new StreamReader(FilePath);
             JObject CountryVsContinent = JObject.Parse(File.ReadAllText("../../../../AggregateGDPPopulation/data/country-continent.json"));
-            List<string> rows = new List<string>();
-            
+            List<string> rows = new List<string>();          
             while (!sample.EndOfStream)
             {
                 line = reg.Replace(sample.ReadLine(), "");
