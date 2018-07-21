@@ -21,7 +21,7 @@ namespace AggregateGDPPopulationAsync
             int PopulationIndex = Array.IndexOf(header, "Population (Millions) - 2012");
             int GDPIndex = Array.IndexOf(header, "GDP Billions (US Dollar) - 2012");
             rows.RemoveAt(0);
-            Dictionary<string, List<double>> resultset = new Dictionary<string, List<double>>();
+            Dictionary<string, Dictionary<string, double>> resultset = new Dictionary<string, Dictionary<string, double>>();
             string[] rowdata;
             foreach (string row in rows)
             {
@@ -34,27 +34,20 @@ namespace AggregateGDPPopulationAsync
                     {
                         double GDPToAdd = Convert.ToDouble(rowdata[GDPIndex]);
                         double PopulationToAdd = Convert.ToDouble(rowdata[PopulationIndex]);
-                        resultset[continent][0] = resultset[continent][0] + GDPToAdd;
-                        resultset[continent][1] = resultset[continent][1] + PopulationToAdd;
+                        resultset[continent]["GDP_2012"] = resultset[continent]["GDP_2012"] + GDPToAdd;
+                        resultset[continent]["POPULATION_2012"] = resultset[continent]["POPULATION_2012"] + PopulationToAdd;
                     }
                     else
                     {
-                        List<double> GDPVsPopulation = new List<double>();
-                        GDPVsPopulation.Add(Convert.ToDouble(rowdata[GDPIndex]));
-                        GDPVsPopulation.Add(Convert.ToDouble(rowdata[PopulationIndex]));
+                        Dictionary<string, double> GDPVsPopulation = new Dictionary<string, double>();
+                        GDPVsPopulation.Add("GDP_2012", Convert.ToDouble(rowdata[GDPIndex]));
+                        GDPVsPopulation.Add("POPULATION_2012", Convert.ToDouble(rowdata[PopulationIndex]));
                         resultset.Add(continent, GDPVsPopulation);
                     }
                 }
                 catch { }
             }
-            string Json = "{ ";
-            foreach (string continent in resultset.Keys)
-            {
-                Json += "\"" + continent + "\": {";
-                Json += "  \"GDP_2012\": " + resultset[continent][0];
-                Json += ",  \"POPULATION_2012\": " + resultset[continent][1] + " }, ";
-            }
-            Json = Json.Substring(0, Json.LastIndexOf(",")) + "}";
+            string Json = JsonConvert.SerializeObject(resultset, Formatting.Indented);
             await WriteFile("../../../../AggregateGDPPopulation/data/outputfileSync.json", Json);
 
         }

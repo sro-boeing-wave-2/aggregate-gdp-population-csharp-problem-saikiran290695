@@ -1,9 +1,11 @@
 using System;
-using Xunit;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using AggregateGDPPopulation;
 using System.IO;
 using AggregateGDPPopulationAsync;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace AggregateGDPPopulation.Tests
 {
@@ -13,30 +15,18 @@ namespace AggregateGDPPopulation.Tests
         public void Test1()
         {
             Class1.Method("../../../../AggregateGDPPopulation/data/datafile.csv");
-            StreamReader sample = new StreamReader("../../../expected-output.json");
-            StreamReader sample2 = new StreamReader("../../../../AggregateGDPPopulation/data/outputfilenew.json");
-            string Actual = "";
-            string Expected = "";
-            while (!sample.EndOfStream)
-                Expected += sample.ReadLine();
-            while (!sample2.EndOfStream)
-                Actual += sample2.ReadLine();
+            JObject Actual = JObject.Parse(File.ReadAllText("../../../../AggregateGDPPopulation/data/outputfilenew.json"));
+            JObject Expected = JObject.Parse(File.ReadAllText("../../../expected-output.json"));
             Assert.Equal(Expected, Actual);           
         }
         [Fact]
         public async void Test2()
         {
-
             Task process1 =  Class2.Process("../../../../AggregateGDPPopulation/data/datafile.csv");
             await process1;
-            StreamReader sample = new StreamReader("../../../expected-output.json");
-            StreamReader sample2 = new StreamReader("../../../../AggregateGDPPopulation/data/outputfileSync.json");
-            string Actual = "";
-            string Expected = "";
-            while (!sample.EndOfStream)
-                Expected += sample.ReadLine();
-            while (!sample2.EndOfStream)
-                Actual += sample2.ReadLine();
+            JObject Actual = JObject.Parse(File.ReadAllText("../../../../AggregateGDPPopulation/data/outputfileSync.json"));
+            JObject Expected = JObject.Parse(File.ReadAllText("../../../expected-output.json"));
+            Assert.Equal(Expected, Actual);
             Assert.Equal(Expected, Actual);
         }
     }
